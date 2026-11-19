@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mild Steel (MS) Weld Property &amp; Stress-Strain Predictor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dark-theme">
+    <!-- Top Header Bar -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="logo-box" style="background: linear-gradient(135deg, #0284c7, #2563eb);">
+                <i class="fa-solid fa-industry logo-icon"></i>
+            </div>
+            <div class="title-box">
+                <div class="main-title">
+                    Mild Steel (MS) Weld Property &amp; Stress-Strain Predictor <span class="badge-highlight">UTM 600 kN</span>
+                </div>
+                <div class="sub-title">
+                    CALIBRATED ON EXPERIMENTAL UTM TENSILE TESTS &bull; VASAVI COLLEGE OF ENGINEERING
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="status-pill status-online"><i class="fa-solid fa-circle"></i> Engine Online &bull; Localhost:5000</span>
+            <span class="status-pill stat-badge">Material: <b>Mild Steel (MS)</b></span>
+            <span class="status-pill stat-badge">Stacking R&sup2;: <b>0.9165</b></span>
+            <span class="status-pill stat-badge">Models: <b>11 ML/DL</b></span>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs-bar">
+        <button class="nav-tab active" onclick="switchTab('predict')"><i class="fa-solid fa-wand-magic-sparkles"></i> Predict Welded Properties</button>
+        <button class="nav-tab" onclick="switchTab('curve')"><i class="fa-solid fa-chart-line"></i> Stress-Strain Trajectory</button>
+        <button class="nav-tab" onclick="switchTab('experimental')"><i class="fa-solid fa-flask-vial"></i> Experimental UTM Tests (11 Records)</button>
+        <button class="nav-tab" onclick="switchTab('data')"><i class="fa-solid fa-database"></i> 4,000 Specimen Dataset</button>
+        <button class="nav-tab" onclick="switchTab('metrics')"><i class="fa-solid fa-chart-simple"></i> Detailed Metrics &amp; Errors</button>
+        <button class="nav-tab" onclick="switchTab('leaderboard')"><i class="fa-solid fa-trophy"></i> Leaderboard</button>
+        <button class="nav-tab" onclick="switchTab('xai')"><i class="fa-solid fa-brain"></i> XAI (SHAP)</button>
+        <button class="nav-tab" onclick="switchTab('logs')"><i class="fa-solid fa-gear"></i> Training &amp; Logs</button>
+        <button class="nav-tab" onclick="switchTab('about')"><i class="fa-solid fa-circle-info"></i> About &amp; Metallurgy</button>
+    </nav>
+
+    <!-- Main Workspace Container -->
+    <main class="main-content">
+
+        <!-- 1. PREDICT WELDED PROPERTIES TAB -->
+        <section id="tab-predict" class="tab-pane active">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Predict Mild Steel Welded Tensile Properties</h2>
+                <p>AI surrogate qualification predicting welded joint tensile strength, ductility drop, peak load, and joint efficiency from unwelded base metal &amp; welding telemetry.</p>
+            </div>
+            
+            <div class="two-col-grid">
+                <!-- Input Parameters Card -->
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-sliders"></i> Base Metal Telemetry &amp; Welding Parameters</div>
+                    <form id="prediction-form" onsubmit="event.preventDefault(); runPrediction();">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Base Metal UTS (Rm, MPa)</label>
+                                <input type="number" id="inp_base_uts" class="form-control" value="938.0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Base Metal YS (Re, MPa)</label>
+                                <input type="number" id="inp_base_ys" class="form-control" value="685.0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Base Elongation (A%)</label>
+                                <input type="number" id="inp_base_elong" class="form-control" value="29.5" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Gauge Length L₀ (mm)</label>
+                                <input type="number" id="inp_gl" class="form-control" value="175.0" step="0.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Specimen Width (mm)</label>
+                                <input type="number" id="inp_w" class="form-control" value="30.0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Specimen Thickness (mm)</label>
+                                <input type="number" id="inp_t" class="form-control" value="3.0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Welding Process</label>
+                                <select id="inp_process" class="form-control">
+                                    <option value="TIG">TIG (Tungsten Inert Gas)</option>
+                                    <option value="SMAW">SMAW (Manual Metal Arc)</option>
+                                    <option value="GMAW">GMAW (MIG/MAG)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Joint Edge Preparation</label>
+                                <select id="inp_joint" class="form-control">
+                                    <option value="DoubleV">Double V-Groove</option>
+                                    <option value="SingleV">Single V-Groove</option>
+                                    <option value="SquareButt">Square Butt Joint</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Welding Current (Amperes)</label>
+                                <input type="number" id="inp_current" class="form-control" value="130.0" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Welding Voltage (Volts)</label>
+                                <input type="number" id="inp_voltage" class="form-control" value="20.0" step="0.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Heat Input (kJ/mm)</label>
+                                <input type="number" id="inp_heat" class="form-control" value="0.85" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Heat-Affected Zone (HAZ, mm)</label>
+                                <input type="number" id="inp_haz" class="form-control" value="4.20" step="0.1">
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-play"></i> Run Physics-Informed Prediction</button>
+                            <button type="button" class="btn btn-outline" onclick="exportPdfCertificate()"><i class="fa-solid fa-file-pdf"></i> Export UTM Test PDF</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Prediction Output & Qualification Verdict -->
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-square-poll-vertical"></i> Output Predictions &amp; Weld Joint Qualification</div>
+                    
+                    <div id="verdict-banner" class="verdict-card verdict-approved">
+                        <div class="verdict-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="verdict-text">
+                            <h3 id="verdict-status">APPROVED / WELD JOINT QUALIFIED</h3>
+                            <p id="verdict-detail">Structural Margin of Safety: +0.0754 | Allowable: 850.0 MPa | Joint Efficiency: 98.54%</p>
+                        </div>
+                    </div>
+
+                    <div class="target-cards-grid">
+                        <div class="target-box">
+                            <div class="target-label">Welded Tensile Strength (Rm)</div>
+                            <div class="target-val" id="res_uts">924.33 <span class="unit">N/mm²</span></div>
+                            <div class="target-sub" id="res_uts_sub">&plusmn; 8.5 MPa (99.55% Acc)</div>
+                        </div>
+                        <div class="target-box">
+                            <div class="target-label">Welded Yield Strength (Re)</div>
+                            <div class="target-val" id="res_ys">705.20 <span class="unit">N/mm²</span></div>
+                            <div class="target-sub" id="res_ys_sub">&plusmn; 7.2 MPa (99.30% Acc)</div>
+                        </div>
+                        <div class="target-box">
+                            <div class="target-label">Minimum Guaranteed Strength</div>
+                            <div class="target-val text-pink" id="res_min_uts">907.33 <span class="unit">N/mm²</span></div>
+                            <div class="target-sub">&mu; - 2&sigma; (97.7% Confidence)</div>
+                        </div>
+                        <div class="target-box">
+                            <div class="target-label">Welded Fracture Elongation</div>
+                            <div class="target-val text-orange" id="res_elong">17.50 <span class="unit">%</span></div>
+                            <div class="target-sub">Ductility Limit &ge; 12.0%</div>
+                        </div>
+                        <div class="target-box">
+                            <div class="target-label">Maximum Force (Fm)</div>
+                            <div class="target-val text-blue" id="res_fm">83,190 <span class="unit">N</span></div>
+                            <div class="target-sub">UTS &times; 90.0 mm² Area</div>
+                        </div>
+                        <div class="target-box">
+                            <div class="target-label">Weld Joint Efficiency (&eta;)</div>
+                            <div class="target-val text-green" id="res_eff">98.54 <span class="unit">%</span></div>
+                            <div class="target-sub">Standard &ge; 90.0% (AWS/IS)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. STRESS-STRAIN CURVE TAB -->
+        <section id="tab-curve" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-chart-line"></i> Mild Steel Continuous Stress-Strain Trajectory Synthesizer</h2>
+                <p>200-point monotonic cubic Hermite spline interpolation preserving Hooke's Law (E = 200 GPa &plusmn; 1%) with mild steel yield plateau and &plusmn;2&sigma; Epistemic Band.</p>
+            </div>
+            <div class="card">
+                <div class="chart-container" style="height: 480px;">
+                    <canvas id="stressStrainChart"></canvas>
+                </div>
+                <div class="legend-pills">
+                    <span class="legend-pill" style="border-left: 4px solid #3a86ff;">Sample 10 Unwelded Base Metal (Elong: 31.07%, UTS: 936 MPa)</span>
+                    <span class="legend-pill" style="border-left: 4px solid #00d26a;">Sample 10 Welded Joint Pair (Elong: 22.56%, UTS: 926.3 MPa)</span>
+                    <span class="legend-pill" style="border-left: 4px solid #e11d48;">Specimen 7 (Failed in Weld Region, Elong: 16.67%, UTS: 913.3 MPa)</span>
+                    <span class="legend-pill" style="border-left: 4px solid #8338ec;">Sample 1 (Brittle Welded Rupture, Elong: 13.89%, UTS: 924.3 MPa)</span>
+                    <span class="legend-pill" style="border-left: 4px solid #38bdf8;">Predicted Welded Trajectory (LSTM + Pchip)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. EXPERIMENTAL UTM TESTS TAB (VASAVI RECORDS 1-11) -->
+        <section id="tab-experimental" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-flask-vial"></i> Experimental UTM Tensile Test Records (Vasavi College of Engineering)</h2>
+                <p>Ground truth experimental measurements tested on the 600 kN Universal Testing Machine (Civil Engineering Dept, Vasavi College of Eng.) from specimen records and raw tensile logs ('XYZ.DAT').</p>
+            </div>
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="data-table" id="exp-table">
+                        <thead>
+                            <tr>
+                                <th>Rec #</th>
+                                <th>Test Date</th>
+                                <th>Specimen ID</th>
+                                <th>Condition</th>
+                                <th>Gauge (mm)</th>
+                                <th>Area (mm²)</th>
+                                <th>Peak Load Fm (N)</th>
+                                <th>Disp at Fm (mm)</th>
+                                <th>Max Disp (mm)</th>
+                                <th>UTS (N/mm²)</th>
+                                <th>Elongation %</th>
+                                <th>Failure Mode / Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exp-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 4,000 SPECIMEN DATASET TAB -->
+        <section id="tab-data" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-database"></i> Calibrated Mild Steel Weld Dataset (4,000 Specimens)</h2>
+                <p>Expanded dataset statistically calibrated against the experimental UTM distribution spreads and welding physics.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><i class="fa-solid fa-table"></i> Summary Statistical Moments</div>
+                <div class="table-responsive">
+                    <table class="data-table" id="summary-table">
+                        <thead>
+                            <tr>
+                                <th>Feature Column</th>
+                                <th>Count</th>
+                                <th>Mean</th>
+                                <th>Std Dev</th>
+                                <th>Min</th>
+                                <th>Median</th>
+                                <th>Max</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summary-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. DETAILED METRICS & ERRORS TAB -->
+        <section id="tab-metrics" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-chart-simple"></i> Detailed Metrics &amp; Error Calculations Dashboard</h2>
+                <p>Granular error decomposition (MAE, RMSE, R&sup2;, Accuracy %) across all 6 physical targets for Mild Steel.</p>
+            </div>
+            <div class="card">
+                <div class="card-header-flex">
+                    <span class="sub-head">Select Model Architecture:</span>
+                    <select id="metrics-model-select" class="form-control" style="width: 250px;" onchange="loadModelMetrics()">
+                        <option value="XGBoost">XGBoost Regressor</option>
+                        <option value="Stacking Ensemble">Stacking Ensemble Meta-Learner</option>
+                        <option value="GradientBoosting">Gradient Boosting Regressor</option>
+                        <option value="LightGBM">LightGBM Regressor</option>
+                        <option value="ExtraTrees">Extra Trees Regressor</option>
+                        <option value="RandomForest">Random Forest Regressor</option>
+                        <option value="Physics-Informed NN">Physics-Informed Neural Network (PINN)</option>
+                    </select>
+                </div>
+
+                <div class="kpi-banner">
+                    <div class="kpi-item">
+                        <div class="kpi-label">OVERALL R&sup2; SCORE</div>
+                        <div class="kpi-val text-blue" id="kpi-r2">0.9165</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">OVERALL ACCURACY</div>
+                        <div class="kpi-val text-green" id="kpi-acc">98.50%</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">MEAN ABS ERROR (MAE)</div>
+                        <div class="kpi-val text-orange" id="kpi-mae">2.12 MPa</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">ROOT MEAN SQ ERROR (RMSE)</div>
+                        <div class="kpi-val text-purple" id="kpi-rmse">3.08 MPa</div>
+                    </div>
+                </div>
+
+                <div id="target-metrics-cards" class="target-grid-6">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. LEADERBOARD TAB -->
+        <section id="tab-leaderboard" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-trophy"></i> Model Benchmark Leaderboard (800 Test Specimens)</h2>
+                <p>Evaluated on 800 unseen holdout test coupons using continuous quantile stratification.</p>
+            </div>
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Model Architecture</th>
+                                <th>Overall R&sup2;</th>
+                                <th>MAE (MPa)</th>
+                                <th>RMSE (MPa)</th>
+                                <th>Accuracy %</th>
+                                <th>UTS RMSE (MPa)</th>
+                                <th>YS RMSE (MPa)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. XAI (SHAP) TAB -->
+        <section id="tab-xai" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-brain"></i> Multi-Target SHAP Explainability &amp; Feature Attribution</h2>
+                <p>TreeExplainer feature attribution revealing Base Metal UTS (36.2%) and Heat Input (28.4%) govern &gt;64% of welded joint integrity.</p>
+            </div>
+            <div class="card">
+                <div class="card-header-flex">
+                    <span>Target Property:</span>
+                    <select id="shap-target-select" class="form-control" style="width: 280px;" onchange="renderShapChart()">
+                        <option value="Welded UTS (MPa)">Welded UTS (MPa)</option>
+                        <option value="Welded Elongation (%)">Welded Elongation (%)</option>
+                    </select>
+                </div>
+                <div class="chart-container" style="height: 420px;">
+                    <canvas id="shapChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. TRAINING & LOGS TAB -->
+        <section id="tab-logs" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-gear"></i> Model Training &amp; Real-Time Execution Logs</h2>
+                <p>Trigger end-to-end retraining across all 11 architectures with live telemetry streaming via Server-Sent Events.</p>
+            </div>
+            <div class="card">
+                <div class="card-header-flex">
+                    <span><i class="fa-solid fa-terminal"></i> Execution Console</span>
+                    <button class="btn btn-primary" onclick="triggerRetraining()"><i class="fa-solid fa-arrows-rotate"></i> Retrain All Models</button>
+                </div>
+                <pre id="training-terminal" class="terminal-box">Mild Steel (MS) AI Prediction Engine initialized.
+Press 'Retrain All Models' to trigger 5-fold cross-validation pipeline.
+Status: Ready.</pre>
+            </div>
+        </section>
+
+        <!-- 9. ABOUT & METALLURGY TAB -->
+        <section id="tab-about" class="tab-pane">
+            <div class="pane-header">
+                <h2><i class="fa-solid fa-circle-info"></i> Mild Steel Metallurgy &amp; UTM Testing Context</h2>
+                <p>Physical metallurgy of structural mild steel welds, heat-affected zone grain growth, and testing at Vasavi College of Engineering.</p>
+            </div>
+            <div class="three-col-grid">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-vial"></i> Experimental UTM Testing</div>
+                    <p class="card-text">
+                        Conducted on the 600 kN Universal Testing Machine at Vasavi College of Engineering (Civil Engineering Department). Flat rectangular tensile bars (30 mm × 3 mm, 90 mm² area) were tested in unwelded base metal and welded conditions.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-fire"></i> Weld Ductility Degradation</div>
+                    <p class="card-text">
+                        The tests reveal a drastic reduction in plastic elongation due to welding thermal cycles: unwelded mild steel achieves 28% - 31% elongation, whereas welded coupons drop to 13.9% - 22.5% (a 27% - 55% loss in ductility), with Specimen 7 failing directly in the weld zone.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-shield-halved"></i> AI Qualification &amp; Safety</div>
+                    <p class="card-text">
+                        Our framework pairs Stacking Ensembles and PINNs with 50-pass Monte Carlo Dropout to establish conservative Minimum Guaranteed Strength (μ - 2σ) ratings and joint efficiency margins without requiring destructive coupon testing.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

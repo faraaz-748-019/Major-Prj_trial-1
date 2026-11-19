@@ -1,0 +1,99 @@
+{
+  "success": true,
+  "shap": {
+    "Welded UTS (MPa)": [
+      {
+        "feature": "Base_UTS (MPa)",
+        "importance": 0.362,
+        "percentage": 36.2
+      },
+      {
+        "feature": "Heat_Input (kJ/mm)",
+        "importance": 0.284,
+        "percentage": 28.4
+      },
+      {
+        "feature": "Base_YS (MPa)",
+        "importance": 0.145,
+        "percentage": 14.5
+      },
+      {
+        "feature": "HAZ_Width (mm)",
+        "importance": 0.082,
+        "percentage": 8.2
+      },
+      {
+        "feature": "Weld_Current (A)",
+        "importance": 0.045,
+        "percentage": 4.5
+      },
+      {
+        "feature": "Pass_Count",
+        "importance": 0.031,
+        "percentage": 3.1
+      },
+      {
+        "feature": "Weld_Process_TIG",
+        "importance": 0.022,
+        "percentage": 2.2
+      },
+      {
+        "feature": "Base_Elongation (%)",
+        "importance": 0.015,
+        "percentage": 1.5
+      },
+      {
+        "feature": "Joint_Type_DoubleV",
+        "importance": 0.009,
+        "percentage": 0.9
+      },
+      {
+        "feature": "Gauge_Length (mm)",
+        "importance": 0.005,
+        "percentage": 0.5
+      }
+    ],
+    "Welded Elongation (%)": [
+      {
+        "feature": "Heat_Input (kJ/mm)",
+        "importance": 0.345,
+        "percentage": 34.5
+      },
+      {
+        "feature": "Base_Elongation (%)",
+        "importance": 0.26,
+        "percentage": 26.0
+      },
+      {
+        "feature": "HAZ_Width (mm)",
+        "importance": 0.165,
+        "percentage": 16.5
+      },
+      {
+        "feature": "Base_UTS (MPa)",
+        "importance": 0.095,
+        "percentage": 9.5
+      },
+      {
+        "feature": "Weld_Process_TIG",
+        "importance": 0.055,
+        "percentage": 5.5
+      },
+      {
+        "feature": "Weld_Current (A)",
+        "importance": 0.04,
+        "percentage": 4.0
+      },
+      {
+        "feature": "Pass_Count",
+        "importance": 0.025,
+        "percentage": 2.5
+      },
+      {
+        "feature": "Failure_Location_Weld",
+        "importance": 0.015,
+        "percentage": 1.5
+      }
+    ]
+  }
+}

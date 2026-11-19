@@ -1,0 +1,12 @@
+Record_No,Date,Specimen_ID,Condition,Gauge_Length_L0_mm,Final_Length_Lf_mm,Width_mm,Thickness_mm,Area_mm2,Max_Force_Fm_N,Disp_at_Fm_mm,Max_Disp_mm,UTS_MPa,Elongation_Pct,Yield_Strength_Re_MPa,Failure_Location,Remarks
+1,30-04-2026,Specimen-7,Welded,175.0,204.2,30.0,3.0,90.0,82200.0,8.9,11.9,913.333,16.667,913.0,Weld Region,"Specimen failed at weld region, Re/Rm=1.000"
+2,08-05-2026,Sample-1,Welded,180.0,205.0,30.0,3.0,90.0,83190.0,16.3,16.9,924.333,13.889,700.0,HAZ / Weld,"Lowest elongation (13.89%), brittle rupture at 16.9 mm"
+3,08-05-2026,Sample-2,Unwelded,170.0,220.0,30.0,3.0,90.0,86070.0,23.7,29.4,956.333,29.412,690.0,Base Metal,"Peak tensile strength (956.3 MPa), ductile cup-and-cone"
+4,08-05-2026,Sample-3,Unwelded,175.0,227.0,30.0,3.0,90.0,84060.0,24.2,27.6,934.0,29.714,680.0,Base Metal,Standard ductile failure
+5,08-05-2026,Sample-4,Unwelded,172.0,220.0,30.0,3.0,90.0,83280.0,20.6,28.3,925.333,27.907,675.0,Base Metal,Uniform yield plateau
+6,08-05-2026,Sample-5,Unwelded,173.0,213.0,30.0,3.0,90.0,84030.0,20.9,23.0,933.667,23.121,685.0,Base Metal,Moderate base ductility
+7,08-05-2026,Sample-6,Unwelded,172.0,225.0,30.0,3.0,90.0,85110.0,25.8,30.8,945.667,30.814,695.0,Base Metal,High elongation and strength
+8,08-05-2026,Sample-8,Unwelded,175.0,225.0,30.0,3.0,90.0,84510.0,23.8,29.5,939.0,28.571,688.0,Base Metal,Consistent parent metal
+9,08-05-2026,Sample-9,Unwelded,176.0,230.0,30.0,3.0,90.0,82770.0,26.2,34.7,919.667,30.682,670.0,Base Metal,Maximum displacement (34.7 mm)
+10,08-05-2026,Sample-10-Unwelded,Unwelded,177.0,232.0,30.0,3.0,90.0,84240.0,25.6,34.2,936.0,31.073,685.0,Base Metal,"Highest elongation (31.07%), pairwise baseline"
+11,08-05-2026,Sample-10-Welded,Welded,195.0,239.0,30.0,3.0,90.0,83370.0,25.7,30.8,926.333,22.564,710.0,Weld Toe / HAZ,Direct welded comparison: -27.4% elongation drop
